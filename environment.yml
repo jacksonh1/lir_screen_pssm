@@ -1,0 +1,25 @@
+name: lir_proteome_screen_pssm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - flake8
+  - isort
+  - pip
+  - typer
+  - loguru
+  - tqdm
+  - ipython
+  - jupyterlab
+  - matplotlib
+  - seaborn
+  - notebook
+  - numpy<2
+  - pandas
+  - biopython>=1.80
+  - scikit-learn
+  - pip:
+    - python-dotenv
+    - mkdocs
+    - logomaker
+    - -e .
