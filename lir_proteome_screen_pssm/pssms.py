@@ -306,7 +306,7 @@ def make_pssm(
     bg=None,
     min_count=0,
     pseudocount=0.0,
-    plot=True,
+    plot=False,
     plot_title=None,
     ax=None,
 ):

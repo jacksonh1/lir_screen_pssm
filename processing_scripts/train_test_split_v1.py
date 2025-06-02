@@ -32,13 +32,13 @@ from lir_proteome_screen_pssm import data_loaders as dl
 old_regex = "...[FWY]..[LVI]"
 old_regex_test_size = 40
 new_regex = "...[FWY]..[WFY]"
-new_regex_test_size = 20
+new_regex_test_size = 30
 
 
 version = "v1"  # Increment as needed
 split_dir = env.PROCESSED_DATA_DIR / "train_test_splits" / version
 split_dir.mkdir(parents=True, exist_ok=True)
-random_seed = 42  # Set a random seed for reproducibility
+random_seed = 73  # Set a random seed for reproducibility
 
 
 # %%
@@ -142,6 +142,7 @@ test_7mers = oldlir_test["7mer"].tolist() + newlir_test["7mer"].tolist()
 # remove test 7mers from binders and nonbinders
 binder_training_set = screen_binders_df[~screen_binders_df["7mer"].isin(test_7mers)]
 print(len(screen_binders_df), len(binder_training_set))
+print(binder_training_set["lir_type"].value_counts())
 
 
 # %%
@@ -178,12 +179,12 @@ metadata = {
     "version": version,
     "lir_types": {
         old_regex: {
-            "test_size": old_regex_test_size,
+            "test_size": len(oldlir_test),
             "test_binders": len(oldlir_test[oldlir_test["binding_label"] == 1]),
             "test_nonbinders": len(oldlir_test[oldlir_test["binding_label"] == 0]),
         },
         new_regex: {
-            "test_size": new_regex_test_size,
+            "test_size": len(newlir_test),
             "test_binders": len(newlir_test[newlir_test["binding_label"] == 1]),
             "test_nonbinders": len(newlir_test[newlir_test["binding_label"] == 0]),
         },

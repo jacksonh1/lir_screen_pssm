@@ -3,21 +3,14 @@ import lir_proteome_screen_pssm.sequence_utils as seqtools
 from pathlib import Path
 import pandas as pd
 from dataclasses import dataclass
+import json
 
 
 # ==============================================================================
 # // data file paths
 # ==============================================================================
 
-_count_matrix_dir = env.DATA_DIR / "processed" / "count_matrices"
-_BACKGROUND_FREQUENCY_PATH = env.DATA_DIR / "processed" / "background_frequencies.csv"
-_COUNT_MATRIX_FILES = {
-    "screen_all_binders": _count_matrix_dir / "screen-all_binders.csv",
-    "screen_all_binders_weighted": _count_matrix_dir
-    / "screen-all_binders-z_score_weighted.csv",
-    "screen_z_score_above_2_4": _count_matrix_dir / "screen-z_score_above_2_4.csv",
-    "ilir_binders": _count_matrix_dir / "ilir-binders.csv",
-}
+
 
 # ==============================================================================
 # // processed sequence tables
@@ -60,10 +53,18 @@ class ProcessedSequenceTables:
 
 PROCESSED_SEQUENCE_TABLES = ProcessedSequenceTables(**_PROCESSED_SEQUENCE_TABLES)
 
-
 # ==============================================================================
-# // background frequencies
+# // background frequencies and count matrices
 # ==============================================================================
+_count_matrix_dir = env.DATA_DIR / "processed" / "count_matrices"
+_BACKGROUND_FREQUENCY_PATH = env.DATA_DIR / "processed" / "background_frequencies.csv"
+_COUNT_MATRIX_FILES = {
+    "screen_all_binders": _count_matrix_dir / "screen-all_binders.csv",
+    "screen_all_binders_weighted": _count_matrix_dir
+    / "screen-all_binders-z_score_weighted.csv",
+    "screen_z_score_above_2_4": _count_matrix_dir / "screen-z_score_above_2_4.csv",
+    "ilir_binders": _count_matrix_dir / "ilir-binders.csv",
+}
 
 
 def _import_background_frequencies(
@@ -125,53 +126,11 @@ COUNT_MATRICES = CountMatrices(**_COUNT_MATRIX_FILES)
 
 
 # ==============================================================================
-# // train/test sets
+# // outside test sets (i.e. not part of the training data)
 # ==============================================================================
 
-_TEST_SET_AUGMENTED_LIR_CENTRAL_FILE = (
-    env.DATA_DIR / "processed" / "test_sets" / "lir_central_augmented_test_set.csv"
-)
-_TEST_SET_LIR_CENTRAL_FILE = (
-    env.DATA_DIR / "processed" / "test_sets" / "lir_central_test_set.csv"
-)
-# _SCREENING_TESTSET_LVI_CSV = (
-#     env.PROCESSED_DATA_DIR / "train_test_splits
-
-
-
-_TRAIN_TEST_SETS = {
-    "screening-v1": {
-        "train": env.PROCESSED_DATA_DIR
-        / "train_test_splits"
-        / "v1"
-        / "screen_binders_train_set.csv",
-        "test-LVI": env.PROCESSED_DATA_DIR
-        / "train_test_splits"
-        / "v1"
-        / "xxx[FWY]xx[LVI]_screen_test_set.csv",
-        "test-WFY": env.PROCESSED_DATA_DIR
-        / "train_test_splits"
-        / "v1"
-        / "xxx[FWY]xx[WFY]_screen_test_set.csv",
-        "metadata": env.PROCESSED_DATA_DIR
-        / "train_test_splits"
-        / "v1"
-        / "split_metadata.json",
-    },
-    "LIR_central-augmented-v1": env.PROCESSED_DATA_DIR / "test_sets" / "lir_central_augmented_test_set.csv",
-    "LIR_central-v1": env.PROCESSED_DATA_DIR / "test_sets" / "lir_central_test_set.csv",
-}
-
-
-# def get_train_test_data(version="v1"):
-#     """Get training and test data from the specified version of the split."""
-#     if version not in _TRAIN_TEST_SETS:
-#         raise ValueError(f"Train/test split version {version} not found")
-
-#     train_df = pd.read_csv(_TRAIN_TEST_SETS[version]["train"])
-#     test_df = pd.read_csv(_TRAIN_TEST_SETS[version]["test"])
-
-#     return train_df, test_df
+_TEST_SET_AUGMENTED_LIR_CENTRAL_FILE = env.PROCESSED_DATA_DIR / "test_sets" / "lir_central_augmented_test_set.csv"
+_TEST_SET_LIR_CENTRAL_FILE = env.PROCESSED_DATA_DIR / "test_sets" / "lir_central_test_set.csv"
 
 @dataclass
 class TestSets:
@@ -191,13 +150,85 @@ class TestSets:
         self.lir_central_augmented = pd.read_csv(self.lir_central_augmented_testset_csv)
 
     def __repr__(self):
-        s = f"Test set: lir_central_augmented_testset_csv='{self.lir_central_augmented_testset_csv}'"
-        c = "\n\t".join(self.lir_central_augmented.columns.tolist())
-        s += f"\n - columns: {c}"
-        s += f"Test set: lir_central_testset_csv='{self.lir_central_testset_csv}'"
-        c = "\n\t".join(self.lir_central.columns.tolist())
-        s += f"\n - columns: {c}"
+        s = f"Test set: lir_central_augmented_testset_csv='{self.lir_central_augmented_testset_csv}\n'"
+        c = "\n    ".join(self.lir_central_augmented.columns.tolist())
+        s += f" - columns: {c}\n    "
+        s += f"Test set: lir_central_testset_csv='{self.lir_central_testset_csv}\n'"
+        c = "\n    ".join(self.lir_central.columns.tolist())
+        s += f"- columns: {c}\n    "
         return s
 
 
 TEST_SETS = TestSets()
+
+
+# ==============================================================================
+# // train/test splits
+# ==============================================================================
+
+_TRAIN_TEST_SETS = {
+    "screening_v1": {
+        "train": env.PROCESSED_DATA_DIR
+        / "train_test_splits"
+        / "v1"
+        / "screen_binders_train_set.csv",
+        "test-LVI": env.PROCESSED_DATA_DIR
+        / "train_test_splits"
+        / "v1"
+        / "xxx[FWY]xx[LVI]_screen_test_set.csv",
+        "test-WFY": env.PROCESSED_DATA_DIR
+        / "train_test_splits"
+        / "v1"
+        / "xxx[FWY]xx[WFY]_screen_test_set.csv",
+        "metadata": env.PROCESSED_DATA_DIR
+        / "train_test_splits"
+        / "v1"
+        / "split_metadata.json",
+    },
+}
+
+
+class ScreeningTrainTestSplit:
+    """
+    A class to represent the train/test split for the screening dataset.
+    Attributes:
+        train (pd.DataFrame): The training set.
+        test_LVI (pd.DataFrame): The test set for the LVI regex.
+        test_WFY (pd.DataFrame): The test set for the WFY regex.
+        metadata (dict): Metadata about the split.
+    """
+
+    def __init__(self, version="screening_v1"):
+        if version not in _TRAIN_TEST_SETS:
+            raise ValueError(f"Train/test split version {version} not found")
+        
+        self.version = version
+        self._train_file = _TRAIN_TEST_SETS[version]["train"]
+        self.train = pd.read_csv(_TRAIN_TEST_SETS[version]["train"])
+        self._test_LVI_file = _TRAIN_TEST_SETS[version]["test-LVI"]
+        self.test_LVI = pd.read_csv(_TRAIN_TEST_SETS[version]["test-LVI"])
+        self._test_WFY_file = _TRAIN_TEST_SETS[version]["test-WFY"]
+        self.test_WFY = pd.read_csv(_TRAIN_TEST_SETS[version]["test-WFY"])
+        
+        self._metadata_file = _TRAIN_TEST_SETS[version]["metadata"]
+        with open(_TRAIN_TEST_SETS[version]["metadata"], "r") as f:
+            self.metadata = json.load(f)
+
+
+    def __repr__(self):
+        s = f"ScreeningTrainTestSplit({self.version})\n"
+        s += "\n".join([f"{k} - {v}" for k, v in self.metadata.items() if not k.startswith("_")])
+        return s
+
+
+# def get_train_test_data(version="v1"):
+#     """Get training and test data from the specified version of the split."""
+#     if version not in _TRAIN_TEST_SETS:
+#         raise ValueError(f"Train/test split version {version} not found")
+
+#     train_df = pd.read_csv(_TRAIN_TEST_SETS[version]["train"])
+#     test_df = pd.read_csv(_TRAIN_TEST_SETS[version]["test"])
+
+#     return train_df, test_df
+
+
