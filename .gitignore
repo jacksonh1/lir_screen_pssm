@@ -1,6 +1,7 @@
 pyrightconfig.json
 todo.md
-data/
+data/raw/LIRCentral_filtered_sequences_250508.csv
+data/raw/human_proteome_DB/
 development/
 archive/
 .ropeproject/

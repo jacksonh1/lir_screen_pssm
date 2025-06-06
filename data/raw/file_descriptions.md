@@ -1,0 +1,14 @@
+- Test set (curated LIRCentral set) = LIRCentral_filtered_sequences_250508.csv
+    - Relevant columns: “Combined”, “first_6_residues”, “True label”
+    - The code I provided to you in my previous email also runs through taking the “Combined” column, purposely designed to end on the core LIR or LIR-adjacent motif, and creates columns with 5mers, 7mers, 8mers, etc. (you can just copy and paste that block)
+- iLIR peptides = iLIR_27.csv
+    - Relevant columns: “Sequence”
+    - Of note – these sequences include 2 N-terminal residues and the core LIR motif [FWY]xx[LVI] and are not strictly human (as mine are). Other species include Yeast, Drosophila, and Arabidopsis, as noted under the “Species” column.
+- LIR-adjacent peptides = liradj_peptides_250411.csv
+    - Sorting peptides to be used for building the PSSM
+    - Relevant columns: “avg_z_score”, “Bind/Nonbind”, “first_6_residues”, “first_8_residues”, “first_5_residues”, “first_7_residues” (and probably the count column, although for binders above 1.7 I allow a cutoff of only 10 counts – already filtered for in the attachment provided - not 100 like the overall input library for calculating the background amino acid frequences).
+    - I have code that turns the “Bind/Nonbind” column into Bind = 1 and Nonbind = 0 to match the LIRCentral test set in the notebook I’ve previously sent, although I’m sure you know how to do this easily.
+- Input Library = 231209_completedata_JK.csv
+    - ***of note*** this includes ALL peptides from the sort (not collapsed – I think – and with no input count cutoff)
+    - Relevant columns: “ID”, “Input Count”
+    - In current analysis, I use an input count cutoff of 100 to calculate the background AA frequencies, although this is something we can adjust.
