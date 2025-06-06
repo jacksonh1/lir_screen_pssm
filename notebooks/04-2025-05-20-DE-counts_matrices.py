@@ -109,14 +109,15 @@ assert all([len(b) == 7 for b in screen_binders_all]), "All binders should be 7 
 
 # %%
 # double check that this produces the same results as my old code
-fig, ax = plt.subplots(figsize=(8, 2))
+fig, ax = plt.subplots(figsize=(8, 2.5))
 mat_old = pssms.alignment_2_counts(screen_binders_all)
 pssms.plot_logo(mat_old, ax=ax)
 ax.set_title('All Binders - old code')
 
 # %%
-fig, ax = plt.subplots(figsize=(8, 2))
+plt.rcParams.update({"font.size": 14})
 mat = pssms.seqlist_2_counts_matrix(screen_binders_all)
+fig, ax = plt.subplots(figsize=(9, 2.5))
 pssms.plot_logo(mat, ax=ax)
 ax.set_title('All Binders')
 

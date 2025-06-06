@@ -41,8 +41,11 @@ create_environment:
 .PHONY: data
 data: requirements
 	$(PYTHON_INTERPRETER) processing_scripts/background_frequencies.py
-	$(PYTHON_INTERPRETER) processing_scripts/make_count_matrices.py
+	# $(PYTHON_INTERPRETER) processing_scripts/make_count_matrices.py
 	$(PYTHON_INTERPRETER) processing_scripts/lir_central_test_set.py
+	$(PYTHON_INTERPRETER) processing_scripts/lir_central_augmented_test_set.py
+	$(PYTHON_INTERPRETER) processing_scripts/process_tables.py
+
 
 
 #################################################################################

@@ -180,6 +180,7 @@ for p in parameter_combinations:
     temp_df["pssm_score_fraction"] = temp_df["sequence"].apply(
         fractional_score, pssm=pssm
     )
+    temp_df["pssm_score_normalized"] = (temp_df["pssm_score"] - temp_df["pssm_score"].min())/(temp_df["pssm_score"].max() - temp_df["pssm_score"].min())
     _, _, _, auprc = stats.df_2_precision_recall_curve(
         temp_df, "true label", "pssm_score"
     )
@@ -196,7 +197,7 @@ for p in parameter_combinations:
         }
     )
 
-    all_scored_df = temp_df[["sequence", "pssm_score", "pssm_score_fraction"]].copy()
+    all_scored_df = temp_df[["sequence", "pssm_score", "pssm_score_fraction", "pssm_score_normalized"]].copy()
     all_scored_df["foreground"] = fg_set
     all_scored_df["background"] = bg_set
     all_scored_df["low_count_mask"] = low_count_cutoff
@@ -209,6 +210,13 @@ for s in scores[1:]:
     all_scored_df = pd.concat([all_scored_df, s], ignore_index=True)
 
 auc_results_df = pd.DataFrame(auc_results)
+
+all_scored_df["data_source"] = all_scored_df["foreground"].map(data_origin_map)
+all_scored_df.to_csv("./all_scores.csv", index=False)
+auc_results_df["data_source"] = auc_results_df["foreground"].map(data_origin_map)
+auc_results_df.to_csv("./results.csv", index=False)
+
+# %%
 print(
     "Best parameters (auROC):\n", auc_results_df.loc[auc_results_df["auROC"].idxmax()]
 )
@@ -216,15 +224,6 @@ print("++++++++++++++++++++++++++++++++++++++")
 print(
     "Best parameters (auPRC):\n", auc_results_df.loc[auc_results_df["auPRC"].idxmax()]
 )
-
-# %%
-pssms_dict.keys()
-
-# %%
-all_scored_df["data_source"] = all_scored_df["foreground"].map(data_origin_map)
-all_scored_df.to_csv("./all_scores.csv", index=False)
-auc_results_df["data_source"] = auc_results_df["foreground"].map(data_origin_map)
-auc_results_df.to_csv("./results.csv", index=False)
 
 # %%
 psiblast_scores = all_scored_df[all_scored_df["data_source"] == "psiblast"].copy()
@@ -236,6 +235,9 @@ psiblast_auc_results = auc_results_df[
 other_auc_results_df = auc_results_df[
     auc_results_df["data_source"] != "psiblast"
 ].copy()
+
+# %%
+other_scores
 
 # %% [markdown]
 # # explore grid search performance results
@@ -430,6 +432,20 @@ sns.displot(
 
 
 # %%
+sns.displot(
+    data=other_scores,
+    x="pssm_score_normalized",
+    hue="foreground",
+    kind="hist",
+    stat="density",
+    common_norm=False,
+    palette="deep",
+    element="step",  # step histogram (not filled)
+    fill=False,  # do not fill the histogram
+    aspect=1.5,  # aspect ratio of the plot
+)
+
+# %%
 other_scores.groupby(["foreground", "background", "low_count_mask", "pseudocount"])[
     "sequence"
 ].count().value_counts()
@@ -453,12 +469,19 @@ other_scores_pivot_f = other_scores.pivot(
 )
 correlations_f = other_scores_pivot_f.corr(method="spearman")
 other_scores_pivot_f["label"] = other_scores_pivot_f.index.map(label_map)
+
+# normalized pssm scores
+other_scores_pivot_n = other_scores.pivot(
+    columns="pssm_id", index="sequence", values="pssm_score_normalized"
+)
+correlations_f = other_scores_pivot_n.corr(method="spearman")
+other_scores_pivot_n["label"] = other_scores_pivot_n.index.map(label_map)
+
 for i in other_scores_pivot_f.columns:
     print(i)
 
+
 # %%
-
-
 def match_regex(seq, re_pattern1, re_pattern2):
     if re.fullmatch(re_pattern1, seq):
         return re_pattern1
@@ -469,6 +492,9 @@ def match_regex(seq, re_pattern1, re_pattern2):
 
 exp_f = other_scores_pivot_f.copy()
 exp_f = exp_f.reset_index(names="sequence")
+exp_n = other_scores_pivot_n.copy()
+exp_n = exp_n.reset_index(names="sequence")
+
 old_regex = "...[FWY]..[LVI]"
 new_regex = "...[FWY]..[WFMY]"
 
@@ -476,6 +502,10 @@ exp_f["lir_type"] = exp_f["sequence"].apply(
     lambda x: match_regex(x, old_regex, new_regex)
 )
 exp_f.to_csv("./pssm_scores_pivot_fraction.csv", index=False)
+exp_n["lir_type"] = exp_n["sequence"].apply(
+    lambda x: match_regex(x, old_regex, new_regex)
+)
+exp_n.to_csv("./pssm_scores_pivot_normalized.csv", index=False)
 
 # %%
 exp_f
@@ -514,6 +544,21 @@ ax.plot(
 )
 
 # %%
+fig, ax = plt.subplots()
+sns.scatterplot(
+    data=other_scores_pivot_n,
+    x="screen_all_binders-proteome-0-1.0",
+    y="ilir_binders-proteome-0-1.0",
+    alpha=0.5,
+    hue="label",
+    ax=ax,
+)
+ax.plot(
+    np.linspace(0, 1, 100),
+    np.linspace(0, 1, 100),
+    linestyle="-",
+    color="black",
+)
 
 # %%
 columns2compare = ["screen_all_binders-proteome-0-1.0", "ilir_binders-proteome-0-1.0"]
@@ -568,11 +613,20 @@ sns.displot(
     palette="deep",
 )
 
-# %%
-
 # %% [markdown]
 # ## split sequences into "old" and "new" lirs
 
+
+# %%
+temp_n = other_scores_pivot_n.copy()
+temp_n = temp_n[columns2compare + ["label"]]
+temp_n = temp_n.reset_index(names="sequence")
+temp_n_long = temp_n.copy().melt(
+    id_vars=["sequence", "label"],
+    value_vars=columns2compare,
+    var_name="pssm_id",
+    value_name="score",
+)
 
 # %%
 old_regex = "...[FWY]..[LVI]"
@@ -588,16 +642,16 @@ def match_regex(seq, re_pattern1, re_pattern2):
         return np.nan
 
 
-temp2["lir_type"] = temp2["sequence"].apply(
+temp_n_long["lir_type"] = temp_n_long["sequence"].apply(
     lambda x: match_regex(x, old_regex, new_regex)
 )
-temp["lir_type"] = temp["sequence"].apply(
+temp_n["lir_type"] = temp_n["sequence"].apply(
     lambda x: match_regex(x, old_regex, new_regex)
 )
 
 # %%
 sns.stripplot(
-    data=temp2[temp2["label"] == 1],
+    data=temp_n_long[temp_n_long["label"] == 1],
     x="lir_type",
     y="score",
     hue="pssm_id",
@@ -610,7 +664,7 @@ sns.stripplot(
 
 # %%
 sns.stripplot(
-    data=temp2,
+    data=temp_n_long,
     x="pssm_id",
     y="score",
     hue="label",
@@ -622,11 +676,28 @@ sns.stripplot(
 plt.xticks(rotation=90)
 
 # %%
+sns.boxplot(
+    data=temp_n_long,
+    x="pssm_id",
+    y="score",
+    hue="label",
+)
+sns.displot(
+    data=temp_n_long,
+    x="score",
+    hue="label",
+    col="pssm_id",
+    kind="hist",
+    common_norm=False,
+    stat="density",
+    fill=True,
+    palette="deep",
+)
+
+# %%
 temp
 
 # %%
-
-
 import altair as alt
 from vega_datasets import data
 import pandas as pd
