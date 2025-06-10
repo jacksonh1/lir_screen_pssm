@@ -7,10 +7,14 @@
 developing a LIR-motif PSSM using data from a proteomic screen and evaluating its performance.
 
 
+
+## installation
+
 run `make` to see available commands.
 
-for example:
+to install the project, run:
 - `make create_environment` to create a conda environment with the required dependencies.
+    - make sure to then activate the environment with `conda activate lir_proteome_screen_pssm`
 - `make data` to run the data processing scripts
 
 

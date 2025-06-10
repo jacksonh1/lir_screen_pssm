@@ -37,7 +37,7 @@ create_environment:
 #################################################################################
 
 
-## Make Dataset
+## run script in processing_scripts to generate processed data
 .PHONY: data
 data: requirements
 	$(PYTHON_INTERPRETER) processing_scripts/background_frequencies.py
