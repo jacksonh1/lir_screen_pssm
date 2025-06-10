@@ -4,6 +4,7 @@ import lir_proteome_screen_pssm.sequence_utils as seqtools
 import re
 import numpy as np
 import copy
+import lir_proteome_screen_pssm.data_loaders as dl
 
 output_dir = env.PROCESSED_DATA_DIR
 output_dir.mkdir(exist_ok=True, parents=True)
@@ -149,6 +150,18 @@ nblist = copy.deepcopy(screen_nonbinders_df["7mer"].tolist())
 screen_binders_df = screen_binders_df[~screen_binders_df["7mer"].isin(nblist)]
 screen_nonbinders_df = screen_nonbinders_df[~screen_nonbinders_df["7mer"].isin(blist)]
 
+# remove 7mers from binders and nonbinders that are in lir central test set
+lir_central_test = dl.TEST_SETS.lir_central
+lir_central_test_7mers = lir_central_test["7mer"].tolist()
+print("number of lir central test 7mers in binders and nonbinders")
+print(screen_binders_df["7mer"].isin(lir_central_test_7mers).sum())
+print(screen_nonbinders_df["7mer"].isin(lir_central_test_7mers).sum())
+screen_binders_df = screen_binders_df[
+    ~screen_binders_df["7mer"].isin(lir_central_test_7mers)
+]
+screen_nonbinders_df = screen_nonbinders_df[
+    ~screen_nonbinders_df["7mer"].isin(lir_central_test_7mers)
+]
 
 def match_regex(seq, re_pattern1, re_pattern2):
     if re.fullmatch(re_pattern1, seq):
@@ -165,8 +178,6 @@ screen_binders_df["lir_type"] = screen_binders_df["7mer"].apply(
 screen_nonbinders_df["lir_type"] = screen_nonbinders_df["7mer"].apply(
     lambda x: match_regex(x, old_regex, new_regex)
 )
-
-
 
 ilir_df.to_csv(output_dir / "ilir_binders.csv", index=False)
 screen_binders_df.to_csv(output_dir / "screen-binders.csv", index=False)
