@@ -14,7 +14,7 @@ PYTHON_INTERPRETER = python
 ## Install/update conda environment
 .PHONY: requirements
 requirements:
-	mamba env update --name $(PROJECT_NAME) --file environment.yml --prune
+	mamba env update --name $(PROJECT_NAME) --file environment.yml
 
 
 ## Delete all compiled Python files ("*.py[co]", "__pycache__", etc.)
@@ -39,12 +39,13 @@ create_environment:
 
 ## run script in processing_scripts to generate processed data
 .PHONY: data
-data: requirements
+data:
 	$(PYTHON_INTERPRETER) processing_scripts/background_frequencies.py
 	# $(PYTHON_INTERPRETER) processing_scripts/make_count_matrices.py
 	$(PYTHON_INTERPRETER) processing_scripts/lir_central_test_set.py
 	$(PYTHON_INTERPRETER) processing_scripts/lir_central_augmented_test_set.py
 	$(PYTHON_INTERPRETER) processing_scripts/process_tables.py
+	$(PYTHON_INTERPRETER) processing_scripts/make_export_files4cong.py
 
 
 
@@ -79,3 +80,13 @@ help:
 # .PHONY: format
 # format:
 # 	black --config pyproject.toml lir_proteome_screen_pssm
+#
+
+## run scripts in processing_scripts to generate processed data
+# .PHONY: data
+# data: requirements
+# 	$(PYTHON_INTERPRETER) processing_scripts/background_frequencies.py
+# 	# $(PYTHON_INTERPRETER) processing_scripts/make_count_matrices.py
+# 	$(PYTHON_INTERPRETER) processing_scripts/lir_central_test_set.py
+# 	$(PYTHON_INTERPRETER) processing_scripts/lir_central_augmented_test_set.py
+# 	$(PYTHON_INTERPRETER) processing_scripts/process_tables.py

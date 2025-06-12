@@ -116,7 +116,7 @@ for col in ilir_df.columns:
 ilir_df = ilir_df.rename(columns=hide_col_dict)
 
 # ==============================================================================
-# // remove duplicate 7mers and 7mers from ilir from screening sets
+# // remove duplicate and overlapping 7mers from all sets
 # ==============================================================================
 
 # Remove ilir overlap with binders and nonbinders
@@ -132,8 +132,8 @@ screen_nonbinders_df = screen_nonbinders_df[
 
 # remove duplicates in binders and nonbinders
 print("number of binder/nonbinder duplicates")
-print(screen_binders_df["7mer"].duplicated().sum())
-print(screen_nonbinders_df["7mer"].duplicated().sum())
+print("binders ", screen_binders_df["7mer"].duplicated().sum())
+print("nonbinders", screen_nonbinders_df["7mer"].duplicated().sum())
 print("dropped duplicates")
 screen_binders_df = screen_binders_df.drop_duplicates(keep="first", subset=["7mer"])
 screen_nonbinders_df = screen_nonbinders_df.drop_duplicates(
@@ -141,6 +141,7 @@ screen_nonbinders_df = screen_nonbinders_df.drop_duplicates(
 )
 
 # remove nonbinders from binders and vice versa
+print("removing 7mers present in both binders and nonbinders")
 print("number of binders in nonbinders")
 print(screen_binders_df["7mer"].isin(screen_nonbinders_df["7mer"]).sum())
 print("number of nonbinders in binders")
@@ -154,14 +155,29 @@ screen_nonbinders_df = screen_nonbinders_df[~screen_nonbinders_df["7mer"].isin(b
 lir_central_test = dl.TEST_SETS.lir_central
 lir_central_test_7mers = lir_central_test["7mer"].tolist()
 print("number of lir central test 7mers in binders and nonbinders")
-print(screen_binders_df["7mer"].isin(lir_central_test_7mers).sum())
-print(screen_nonbinders_df["7mer"].isin(lir_central_test_7mers).sum())
+print("binders ", screen_binders_df["7mer"].isin(lir_central_test_7mers).sum())
+print("nonbinders ", screen_nonbinders_df["7mer"].isin(lir_central_test_7mers).sum())
 screen_binders_df = screen_binders_df[
     ~screen_binders_df["7mer"].isin(lir_central_test_7mers)
 ]
 screen_nonbinders_df = screen_nonbinders_df[
     ~screen_nonbinders_df["7mer"].isin(lir_central_test_7mers)
 ]
+
+# remove 7mers from binders and nonbinders that are in augmented lir central test set (this is basically the same as lir_central_test but with some additional 7mers)
+# so I could have just used the augmented lir central test set from the start
+lir_central_test_augmented = dl.TEST_SETS.lir_central_augmented
+lir_central_test_augmented_7mers = lir_central_test_augmented["7mer"].tolist()
+print("number of 7mers in binders and nonbinders that are also in the 7mers added to the augmented lir central test set")
+print("binders ", screen_binders_df["7mer"].isin(lir_central_test_augmented_7mers).sum())
+print("nonbinders ", screen_nonbinders_df["7mer"].isin(lir_central_test_augmented_7mers).sum())
+screen_binders_df = screen_binders_df[
+    ~screen_binders_df["7mer"].isin(lir_central_test_augmented_7mers)
+]
+screen_nonbinders_df = screen_nonbinders_df[
+    ~screen_nonbinders_df["7mer"].isin(lir_central_test_augmented_7mers)
+]
+
 
 def match_regex(seq, re_pattern1, re_pattern2):
     if re.fullmatch(re_pattern1, seq):

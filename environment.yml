@@ -18,6 +18,7 @@ dependencies:
   - pandas
   - biopython>=1.80
   - scikit-learn
+  - jupytext
   - pip:
     - python-dotenv
     - mkdocs

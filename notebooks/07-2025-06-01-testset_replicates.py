@@ -34,7 +34,6 @@
 # - 1.0
 
 # %%
-# %%
 from lir_proteome_screen_pssm import environment as env
 from lir_proteome_screen_pssm import pssms
 import pandas as pd
@@ -49,13 +48,28 @@ import lir_proteome_screen_pssm.sequence_utils as seqtools
 import copy
 from pathlib import Path
 import re
-import umap
-from sklearn.preprocessing import OneHotEncoder
+# import umap
+# from sklearn.preprocessing import OneHotEncoder
 import lir_proteome_screen_pssm.data_loaders as dl
 import lir_proteome_screen_pssm.stats as stats
 
 # # %load_ext autoreload
 # # %autoreload 2
+
+# %%
+k = set(dl.PROCESSED_SEQUENCE_TABLES.ilir_binders["7mer"].to_list())
+x = set(dl.PROCESSED_SEQUENCE_TABLES.screen_binders["7mer"].to_list())
+y = set(dl.PROCESSED_SEQUENCE_TABLES.screen_nonbinders["7mer"].to_list())
+z = set(dl.TEST_SETS.lir_central["7mer"].to_list())
+print(k.intersection(x))
+print(k.intersection(y))
+print(k.intersection(z))
+print(len(k.intersection(x)))
+print(len(k.intersection(y)))
+print(len(k.intersection(z)))
+print(x.intersection(y))
+print(x.intersection(k))
+print(y.intersection(k))
 
 # %%
 plt.rcParams.update({"font.size": 14})
@@ -229,8 +243,8 @@ def plot_auc_results_replicates(auc_results_df: pd.DataFrame, order: list[str] |
             "screen: xxx[FWY]xx[WFY]",
             "screen: xxx[FWY]xx[LVI]",
             "ilir",
-            "screen: with testset",
-            "screen: xxx[FWY]xx[WFY] with testset",
+            "screen: (cheating)",
+            "screen: xxx[FWY]xx[WFY] (cheating)",
         ]
     g = sns.catplot(
         data=auc_results_df,
@@ -411,8 +425,6 @@ for i in range(10):
 # %%
 plot_auc_results(r.auc_results)
 
-
-# %%
 
 # %% [markdown]
 # # what about test sets at different z-score ranges?
