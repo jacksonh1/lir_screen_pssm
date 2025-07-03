@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: lir_proteome_screen_pssm
 #     language: python
@@ -271,7 +271,7 @@ plt.rcParams["axes.titlesize"] = 16
 plt.rcParams["font.size"] = 16
 fig, axes = plt.subplots(ncols=2, figsize=(11, 5))
 sns.stripplot(
-    data=other_auc_results_df[other_auc_results_df["low_count_mask"] == 0],
+    data=auc_results_df[auc_results_df["low_count_mask"] == 0],
     x="auROC",
     y="data_source",
     hue="pseudocount",
@@ -280,7 +280,7 @@ sns.stripplot(
     palette="deep",
 )
 sns.stripplot(
-    data=other_auc_results_df[other_auc_results_df["low_count_mask"] == 0],
+    data=auc_results_df[auc_results_df["low_count_mask"] == 0],
     x="auPRC",
     y="data_source",
     hue="pseudocount",

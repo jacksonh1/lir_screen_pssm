@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: lir_proteome_screen_pssm
 #     language: python
@@ -534,7 +534,7 @@ auc_roc_replicates = []
 seed = 55
 for i in range(100):
     r = PssmTestScores(*driver2(
-        pseudo_count=1,
+        pseudo_count=0,
         background=dl.BGFREQS.proteome,
         z_score_ranges=None,
         test_size=40,

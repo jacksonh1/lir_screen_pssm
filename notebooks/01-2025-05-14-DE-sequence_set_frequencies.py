@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: lir_proteome_screen_pssm
 #     language: python
@@ -39,6 +39,9 @@ env.RAWFILEPATHS
 sc_lirs = pd.read_csv(env.RAWFILEPATHS.screening_hits_table)
 sc_binders = sc_lirs[sc_lirs['Bind/Nonbind'] == 'Bind'].copy()
 sc_nbs = sc_lirs[sc_lirs['Bind/Nonbind'] == 'Nonbind'].copy()
+
+# %%
+sc_lirs
 
 # %% [markdown]
 # only unique binders

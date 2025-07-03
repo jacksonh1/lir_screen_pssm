@@ -24,6 +24,10 @@ lir_central_augmented[['7mer', 'true label', 'UNIPROT_ACC', '_Combined']].to_csv
 screen_binders = dl.PROCESSED_SEQUENCE_TABLES.screen_binders.copy()
 screen_binders[["7mer", "true label", "avg_z_score", "lir_type", "_ID"]].to_csv(EXPORT_FOLDER / 'screen_binders.csv', index=False)
 
+screen_binders_186 = pd.read_csv(env.RAWFILEPATHS.full_screening_table, sep='\t')
+screen_binders_186 = screen_binders_186[screen_binders_186['avg_z_score'] >= 1.7].copy()
+screen_binders_186[["7mer", "true label", "avg_z_score", "lir_type", "_ID"]].to_csv(EXPORT_FOLDER / 'screen_binders_186.csv', index=False)
+
 screen_nonbinders = dl.PROCESSED_SEQUENCE_TABLES.screen_nonbinders.copy()
 screen_nonbinders[["7mer", "true label", "avg_z_score", "lir_type", "_ID"]].to_csv(EXPORT_FOLDER / 'screen_nonbinders.csv', index=False)
 
@@ -34,7 +38,7 @@ ilir[["7mer", "true label"]].to_csv(EXPORT_FOLDER / 'ilir_binders.csv', index=Fa
 
 
 # ==============================================================================
-# // ilir PSSMs
+# // PSSMs
 # ==============================================================================
 # %%
 
@@ -52,4 +56,16 @@ for pcount in [0, 1]:
     pssms.plot_logo(ilir_pssm, ax = ax, title=f'ilir PSSM; pseudocount = {pcount}')
     plt.savefig(EXPORT_FOLDER / f'ilir_pssm-pseudocount_{pcount}.png', dpi=300, bbox_inches='tight')
 
+
+foreground = dl.PROCESSED_SEQUENCE_TABLES.screen_binders["7mer"].to_list()
+for pcount in [0, 1]:
+    fg_counts = pssms.seqlist_2_counts_matrix(foreground, pseudocount=pcount)
+    screen_pssm = pssms.make_pssm(
+        df_counts=fg_counts,
+        bg=background
+    )
+    screen_pssm.to_csv(EXPORT_FOLDER / f'screen_binders_pssm-pseudocount_{pcount}.csv')
+    fig, ax = plt.subplots(figsize=(10, 4))
+    pssms.plot_logo(screen_pssm, ax = ax, title=f'screen binders PSSM; pseudocount = {pcount}')
+    plt.savefig(EXPORT_FOLDER / f'screen_binders_pssm-pseudocount_{pcount}.png', dpi=300, bbox_inches='tight')
 
