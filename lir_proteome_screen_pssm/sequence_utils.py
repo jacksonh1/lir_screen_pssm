@@ -176,6 +176,47 @@ def regex2overlapping(regex):
     return new_regex
 
 
+def get_overlapping_regex_matches(pattern: str, string: str) -> list[tuple[str, int, int]]:
+    """
+    Find all overlapping matches of a regex pattern in a string.
+    
+    Args:
+        pattern (str): The regex pattern to search for
+        string (str): The string to search in
+    
+    Returns:
+        list: List of tuples (matched_text, start_index, end_index)
+    """
+    matches = []
+    i = 0
+    while i < len(string):
+        match = re.search(pattern, string[i:])
+        if not match:
+            break
+        start = i + match.start()
+        end = i + match.end()
+        # Handle lookahead patterns where group(1) contains the actual match
+        # matched_text = match.group(1) if match.groups() else match.group()
+        matched_text = match.group()
+        matches.append((matched_text, start, start + len(matched_text)))
+        i = start + 1  # Move start index by 1 to allow overlapping
+    return matches
+
+
+def get_overlapping_regex_matches_v2(pattern: str, string: str) -> list[tuple[str, int, int]]:
+    """Use lookahead for overlapping matches."""
+    lookahead_pattern = f'(?=({pattern}))'
+    matches = []
+    
+    for match in re.finditer(lookahead_pattern, string):
+        start = match.start()
+        matched_text = match.group(1)
+        end = start + len(matched_text)
+        matches.append((start, end, matched_text))
+    
+    return matches
+
+
 def get_regex_matches(regex_pattern: str, seq_str: str):
     """searches for all matches of a regex pattern in a sequence string
     returns a generator object that yields the match sequence, start index, and end index

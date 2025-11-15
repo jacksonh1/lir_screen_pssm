@@ -7,30 +7,15 @@ import json
 
 
 # ==============================================================================
-# // data file paths
-# ==============================================================================
-
-
-
-# ==============================================================================
 # // processed sequence tables
 # ==============================================================================
-
-_PROCESSED_SEQUENCE_TABLES = {
-    "screen_binders_csv": env.PROCESSED_DATA_DIR / "screen-binders.csv",
-    "screen_nonbinders_csv": env.PROCESSED_DATA_DIR / "screen-nonbinders.csv",
-    "ilir_binders_csv": env.PROCESSED_DATA_DIR / "ilir_binders.csv",
-}
-
 
 @dataclass
 class ProcessedSequenceTables:
 
-    screen_binders_csv: str | Path = _PROCESSED_SEQUENCE_TABLES["screen_binders_csv"]
-    screen_nonbinders_csv: str | Path = _PROCESSED_SEQUENCE_TABLES[
-        "screen_nonbinders_csv"
-    ]
-    ilir_binders_csv: str | Path = _PROCESSED_SEQUENCE_TABLES["ilir_binders_csv"]
+    screen_binders_csv: str | Path
+    screen_nonbinders_csv: str | Path
+    ilir_binders_csv: str | Path
 
     def __post_init__(self):
         self.screen_binders = pd.read_csv(self.screen_binders_csv)
@@ -38,7 +23,7 @@ class ProcessedSequenceTables:
         self.ilir_binders = pd.read_csv(self.ilir_binders_csv)
 
     def __repr__(self):
-        s = f"Processed Sequence Tables:\n"
+        s = "Processed Sequence Tables:\n"
         s += f"screen_binders_csv='{self.screen_binders_csv}'\n"
         c = "\n    ".join(self.screen_binders.columns.tolist())
         s += f" - columns:\n    {c}\n"
@@ -51,24 +36,25 @@ class ProcessedSequenceTables:
         return s
 
 
-PROCESSED_SEQUENCE_TABLES = ProcessedSequenceTables(**_PROCESSED_SEQUENCE_TABLES)
+def get_processed_sequence_tables(version=None):
+    """Return ProcessedSequenceTables for a specific processed data version."""
+    if version is None:
+        version = env.processed_data_version
+    processed_dir = env.PROCESSED_DATA_DIR / version
+    tables = {
+        "screen_binders_csv": processed_dir / "screen-binders.csv",
+        "screen_nonbinders_csv": processed_dir / "screen-nonbinders.csv",
+        "ilir_binders_csv": processed_dir / "ilir_binders.csv",
+    }
+    return ProcessedSequenceTables(**tables)
+
 
 # ==============================================================================
 # // background frequencies and count matrices
 # ==============================================================================
-_count_matrix_dir = env.DATA_DIR / "processed" / "count_matrices"
-_BACKGROUND_FREQUENCY_PATH = env.DATA_DIR / "processed" / "background_frequencies.csv"
-_COUNT_MATRIX_FILES = {
-    "screen_all_binders": _count_matrix_dir / "screen-all_binders.csv",
-    "screen_all_binders_weighted": _count_matrix_dir
-    / "screen-all_binders-z_score_weighted.csv",
-    "screen_z_score_above_2_4": _count_matrix_dir / "screen-z_score_above_2_4.csv",
-    "ilir_binders": _count_matrix_dir / "ilir-binders.csv",
-}
-
 
 def _import_background_frequencies(
-    background_freq_csv: Path = _BACKGROUND_FREQUENCY_PATH,
+    background_freq_csv: Path
 ) -> dict:
     """
     Import background frequencies from a CSV file.
@@ -98,6 +84,17 @@ class BGFrequencies:
         setattr(self, key, value)
 
 
+def get_background_frequencies(version=None):
+    """Get background frequencies for a specific processed data version."""
+    if version is None:
+        version = env.processed_data_version
+    background_freq_csv = env.PROCESSED_DATA_DIR / version / "background_frequencies.csv"
+    if not background_freq_csv.exists():
+        raise FileNotFoundError(f"Background frequency file not found: {background_freq_csv}")
+    bg_freqs = _import_background_frequencies(background_freq_csv)
+    return BGFrequencies(**bg_freqs)
+
+
 class CountMatrices:
 
     def __init__(self, **kwargs):
@@ -118,19 +115,24 @@ class CountMatrices:
         setattr(self, key, value)
 
 
-if _BACKGROUND_FREQUENCY_PATH.exists():
-    bg_freqs = _import_background_frequencies()
-    BGFREQS = BGFrequencies(**bg_freqs)
-
-COUNT_MATRICES = CountMatrices(**_COUNT_MATRIX_FILES)
-
+def get_count_matrices(version=None):
+    """Get count matrices for a specific processed data version."""
+    if version is None:
+        version = env.processed_data_version
+    count_matrix_dir = env.PROCESSED_DATA_DIR / version / "count_matrices"
+    count_matrix_files = {
+        "screen_all_binders": count_matrix_dir / "screen-all_binders.csv",
+        "screen_all_binders_weighted": count_matrix_dir
+        / "screen-all_binders-z_score_weighted.csv",
+        "screen_z_score_above_2_4": count_matrix_dir / "screen-z_score_above_2_4.csv",
+        "ilir_binders": count_matrix_dir / "ilir-binders.csv",
+    }
+    return CountMatrices(**count_matrix_files)
 
 # ==============================================================================
 # // outside test sets (i.e. not part of the training data)
 # ==============================================================================
 
-_TEST_SET_AUGMENTED_LIR_CENTRAL_FILE = env.PROCESSED_DATA_DIR / "test_sets" / "lir_central_augmented_test_set.csv"
-_TEST_SET_LIR_CENTRAL_FILE = env.PROCESSED_DATA_DIR / "test_sets" / "lir_central_test_set.csv"
 
 @dataclass
 class TestSets:
@@ -141,8 +143,8 @@ class TestSets:
         lir_central_testset_csv (str|Path): Path to the CSV file containing the LIR central test set.
     """
 
-    lir_central_testset_csv: str | Path = _TEST_SET_LIR_CENTRAL_FILE
-    lir_central_augmented_testset_csv: str | Path = _TEST_SET_AUGMENTED_LIR_CENTRAL_FILE
+    lir_central_testset_csv: str | Path
+    lir_central_augmented_testset_csv: str | Path
     # screening_testset_LVI_csv: str | Path =
 
     def __post_init__(self):
@@ -159,28 +161,36 @@ class TestSets:
         return s
 
 
-TEST_SETS = TestSets()
-
+def get_test_sets(version=None):
+    """Return TestSets for a specific processed data version."""
+    if version is None:
+        version = env.processed_data_version
+    test_set_dir = env.PROCESSED_DATA_DIR / version / "test_sets"
+    test_sets = {
+        "lir_central_testset_csv": test_set_dir / "lir_central_test_set.csv",
+        "lir_central_augmented_testset_csv": test_set_dir / "lir_central_augmented_test_set.csv",
+    }
+    return TestSets(**test_sets)
 
 # ==============================================================================
-# // train/test splits
+# // train/test splits - DEPRECATED
 # ==============================================================================
 
 _TRAIN_TEST_SETS = {
     "screening_v1": {
-        "train": env.PROCESSED_DATA_DIR
+        "train": env.PROCESSED_DATA_DIR / "v1"
         / "train_test_splits"
         / "v1"
         / "screen_binders_train_set.csv",
-        "test-LVI": env.PROCESSED_DATA_DIR
+        "test-LVI": env.PROCESSED_DATA_DIR / "v1"
         / "train_test_splits"
         / "v1"
         / "xxx[FWY]xx[LVI]_screen_test_set.csv",
-        "test-WFY": env.PROCESSED_DATA_DIR
+        "test-WFY": env.PROCESSED_DATA_DIR / "v1"
         / "train_test_splits"
         / "v1"
         / "xxx[FWY]xx[WFY]_screen_test_set.csv",
-        "metadata": env.PROCESSED_DATA_DIR
+        "metadata": env.PROCESSED_DATA_DIR / "v1"
         / "train_test_splits"
         / "v1"
         / "split_metadata.json",
@@ -201,7 +211,7 @@ class ScreeningTrainTestSplit:
     def __init__(self, version="screening_v1"):
         if version not in _TRAIN_TEST_SETS:
             raise ValueError(f"Train/test split version {version} not found")
-        
+
         self.version = version
         self._train_file = _TRAIN_TEST_SETS[version]["train"]
         self.train = pd.read_csv(_TRAIN_TEST_SETS[version]["train"])
@@ -209,7 +219,7 @@ class ScreeningTrainTestSplit:
         self.test_LVI = pd.read_csv(_TRAIN_TEST_SETS[version]["test-LVI"])
         self._test_WFY_file = _TRAIN_TEST_SETS[version]["test-WFY"]
         self.test_WFY = pd.read_csv(_TRAIN_TEST_SETS[version]["test-WFY"])
-        
+
         self._metadata_file = _TRAIN_TEST_SETS[version]["metadata"]
         with open(_TRAIN_TEST_SETS[version]["metadata"], "r") as f:
             self.metadata = json.load(f)
@@ -230,5 +240,3 @@ class ScreeningTrainTestSplit:
 #     test_df = pd.read_csv(_TRAIN_TEST_SETS[version]["test"])
 
 #     return train_df, test_df
-
-

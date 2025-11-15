@@ -1,0 +1,37 @@
+foreground,test set,mean auROC,std auROC
+ilir,[FWY]xx[LVI],0.605712,0.04969313770887824
+ilir,[FWY]xx[WFY],0.35295000000000004,0.1054430168289005
+ilir,lir_central,0.7047529538131042,0.0
+ilir,lir_central_augmented,0.7024186256781193,0.0
+screen,[FWY]xx[LVI],0.65086,0.046582239646726434
+screen,[FWY]xx[WFY],0.5053,0.13184360952938665
+screen,lir_central,0.6700966702470462,0.021931246703148454
+screen,lir_central_augmented,0.6531238698010849,0.023220583751650602
+screen: (cheating),[FWY]xx[LVI],0.7609440000000001,0.0406509664675697
+screen: (cheating),[FWY]xx[WFY],0.6898000000000001,0.1103893934298861
+screen: (cheating),lir_central,0.6729323308270676,0.0
+screen: (cheating),lir_central_augmented,0.6525768535262206,0.0
+screen: 1.7 <= z-score < 2.3,[FWY]xx[LVI],0.550084,0.05966977936692048
+screen: 1.7 <= z-score < 2.3,[FWY]xx[WFY],0.5248,0.12623915094899532
+screen: 1.7 <= z-score < 2.3,lir_central,0.5521804511278195,0.040239538173361074
+screen: 1.7 <= z-score < 2.3,lir_central_augmented,0.5457707956600362,0.040084034047371084
+screen: 1.7 <= z-score < 4.2,[FWY]xx[LVI],0.65086,0.046582239646726434
+screen: 1.7 <= z-score < 4.2,[FWY]xx[WFY],0.5053,0.13184360952938665
+screen: 1.7 <= z-score < 4.2,lir_central,0.6700966702470462,0.021931246703148454
+screen: 1.7 <= z-score < 4.2,lir_central_augmented,0.6531238698010849,0.023220583751650602
+screen: 2.3 <= z-score < 4.2,[FWY]xx[LVI],0.642876,0.04810248134047882
+screen: 2.3 <= z-score < 4.2,[FWY]xx[WFY],0.41265,0.1202364148440291
+screen: 2.3 <= z-score < 4.2,lir_central,0.689985230934479,0.01748606170004316
+screen: 2.3 <= z-score < 4.2,lir_central_augmented,0.6843094484629294,0.016001126294903547
+screen: xxx[FWY]xx[LVI],[FWY]xx[LVI],0.6544240000000001,0.0459083608942859
+screen: xxx[FWY]xx[LVI],[FWY]xx[WFY],0.49670000000000003,0.13618952183845076
+screen: xxx[FWY]xx[LVI],lir_central,0.6857008592910848,0.017974714995892243
+screen: xxx[FWY]xx[LVI],lir_central_augmented,0.6699706148282099,0.018449257072505748
+screen: xxx[FWY]xx[WFY],[FWY]xx[LVI],0.452712,0.06074786653775495
+screen: xxx[FWY]xx[WFY],[FWY]xx[WFY],0.57465,0.09613819756113089
+screen: xxx[FWY]xx[WFY],lir_central,0.4104323308270677,0.047210789938743454
+screen: xxx[FWY]xx[WFY],lir_central_augmented,0.409249547920434,0.043554591397476285
+screen: xxx[FWY]xx[WFY] (cheating),[FWY]xx[LVI],0.44179,0.045404573035381056
+screen: xxx[FWY]xx[WFY] (cheating),[FWY]xx[WFY],0.8987,0.06314413526355253
+screen: xxx[FWY]xx[WFY] (cheating),lir_central,0.3963480128893663,0.0
+screen: xxx[FWY]xx[WFY] (cheating),lir_central_augmented,0.397377938517179,0.0

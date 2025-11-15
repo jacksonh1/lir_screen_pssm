@@ -10,6 +10,8 @@ from dataclasses import dataclass
 # Load environment variables from .env file if it exists
 load_dotenv()
 
+processed_data_version = "v2"
+
 # ==============================================================================
 # // main project paths
 # ==============================================================================
@@ -30,13 +32,15 @@ class FilePaths:
     screening_hits_table: Path
     lir_central_table: Path
     full_screening_table: Path
+    full_screening_table_2: Path
 
 
 RAWFILEPATHS = FilePaths(
     ilir_table=RAW_DATA_DIR / "iLIR_27.csv",
     screening_hits_table=RAW_DATA_DIR / "liradj_peptides_250411.csv",
     lir_central_table=RAW_DATA_DIR / "LIRCentral_filtered_sequences_250508.csv",
-    full_screening_table=RAW_DATA_DIR / "231209_completedata_JK.csv"
+    full_screening_table=RAW_DATA_DIR / "231209_completedata_JK.csv",
+    full_screening_table_2=RAW_DATA_DIR / "SF3_input_postcollapse_JK.csv"
 )
 
 

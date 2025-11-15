@@ -1,8 +1,11 @@
+**/localcider_results.csv
 pyrightconfig.json
 todo.md
 data/raw/231209_completedata_JK.csv
+data/raw/SF3_input_postcollapse_JK.csv
 data/raw/human_proteome_DB/
 development/
+manuscript/
 archive/
 .ropeproject/
 ref_materials/

@@ -1,0 +1,5 @@
+foreground,test set,auROC
+screen all binders,lir central augmented,0.6525768535262206
+screen low z-score,lir central augmented,0.5370705244122966
+screen high z-score,lir central augmented,0.6864828209764919
+ilir,lir central augmented,0.7024186256781193

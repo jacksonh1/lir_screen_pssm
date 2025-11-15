@@ -4,7 +4,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 import lir_proteome_screen_pssm.environment as env
-
+import re
 # AMINO_ACIDS = sorted(
 #     [
 #         "V",
@@ -152,9 +152,19 @@ def plot_logo_as_heatmap(mat, ax=None):
     """
     if ax is None:
         fig, ax = plt.subplots(figsize=[6, 5])
+    # sns.heatmap(
+    #     mat.T, annot=True, fmt=".2g", linewidth=0.5, ax=ax, annot_kws={"size": 10}, cmap="Blues"
+    # )
     sns.heatmap(
-        mat.T, annot=True, fmt=".2g", linewidth=0.5, ax=ax, annot_kws={"size": 10}
+        mat.T, annot=True, fmt=".2g", linewidth=0.5, ax=ax, annot_kws={"size": 10}, cmap="Blues", 
+        linecolor='black', linewidths=0.5, cbar=False
     )
+    ax.spines['bottom'].set_visible(True)
+    ax.spines['bottom'].set_linewidth(0.5)
+    ax.spines['right'].set_visible(True)
+    ax.spines['right'].set_linewidth(0.5)
+    ax.spines['bottom'].set_color('black')
+    ax.spines['right'].set_color('black')
     ax.tick_params(axis="both", which="both", length=0, labelsize=12)
     ax.set_xlabel("position")
     return ax
@@ -321,3 +331,37 @@ def make_pssm(
         plot_logo(pssm, ax=ax)
         ax.set_title(plot_title) # type: ignore
     return pssm
+
+
+def import_plogo(plogo_text_file: str) -> pd.DataFrame:
+    """
+    Import a pLogo text file and convert it to a DataFrame in logomaker format.
+
+    Parameters
+    ----------
+    plogo_text_file : str
+        Path to the pLogo text file.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame in logomaker format (rows = positions, columns = amino acids).
+    """
+    with open(plogo_text_file, "r") as handle:
+        f = handle.readlines()
+        f2 = [i.strip() for i in f]
+    aas, positions, scores = [], [], []
+    p = re.compile(r"(\w)_(.*)=(.*)]")
+    for i in f2:
+        temp = p.findall(i)[0]
+        aas.append(temp[0])
+        positions.append(float(temp[1]))
+        scores.append(float(temp[2]))
+    pos = list(range(int(min(positions)), int(max(positions)) + 1))
+    mat = pd.DataFrame(columns=env.STANDARD_AMINO_ACIDS, index=pos)
+    for aa, p, s in zip(aas, positions, scores):
+        mat.loc[int(p), aa] = s
+    mat.index.name = "pos"
+    mat = mat.reindex(sorted(mat.columns), axis=1)
+    mat = mat.fillna(0).copy()
+    return mat

@@ -5,6 +5,7 @@
 PROJECT_NAME = lir_proteome_screen_pssm
 PYTHON_VERSION = 3.10
 PYTHON_INTERPRETER = python
+PROCESSING_VERSION = v2
 
 #################################################################################
 # COMMANDS                                                                      #
@@ -40,12 +41,11 @@ create_environment:
 ## run script in processing_scripts to generate processed data
 .PHONY: data
 data:
-	$(PYTHON_INTERPRETER) processing_scripts/background_frequencies.py
-	# $(PYTHON_INTERPRETER) processing_scripts/make_count_matrices.py
-	$(PYTHON_INTERPRETER) processing_scripts/lir_central_test_set.py
-	$(PYTHON_INTERPRETER) processing_scripts/lir_central_augmented_test_set.py
-	$(PYTHON_INTERPRETER) processing_scripts/process_tables.py
-	$(PYTHON_INTERPRETER) processing_scripts/make_export_files4cong.py
+	$(PYTHON_INTERPRETER) processing_scripts/$(PROCESSING_VERSION)/lir_central_test_set.py
+	$(PYTHON_INTERPRETER) processing_scripts/$(PROCESSING_VERSION)/lir_central_augmented_test_set.py
+	$(PYTHON_INTERPRETER) processing_scripts/$(PROCESSING_VERSION)/process_tables.py
+	$(PYTHON_INTERPRETER) processing_scripts/$(PROCESSING_VERSION)/background_frequencies.py
+	$(PYTHON_INTERPRETER) processing_scripts/$(PROCESSING_VERSION)/make_export_files4cong.py
 
 
 
@@ -90,3 +90,5 @@ help:
 # 	$(PYTHON_INTERPRETER) processing_scripts/lir_central_test_set.py
 # 	$(PYTHON_INTERPRETER) processing_scripts/lir_central_augmented_test_set.py
 # 	$(PYTHON_INTERPRETER) processing_scripts/process_tables.py
+
+# $(PYTHON_INTERPRETER) processing_scripts/$(PROCESSING_VERSION)/make_count_matrices.py

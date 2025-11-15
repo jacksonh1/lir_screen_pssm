@@ -1,0 +1,26 @@
+foreground,test set,mean auROC,std auROC
+ilir,lir_central,0.7047529538131042,0.0
+ilir,lir_central_augmented,0.7024186256781193,0.0
+ilir,screen: 1.7 <= z-score < 2.3,0.4838625,0.09768066255467972
+ilir,screen: 1.7 <= z-score < 4.2,0.6048,0.08025482615526697
+ilir,screen: 2.3 <= z-score < 4.2,0.8139749999999999,0.061391786005042144
+screen: 1.7 <= z-score < 2.3,lir_central,0.5324113856068743,0.04138070107305768
+screen: 1.7 <= z-score < 2.3,lir_central_augmented,0.5289330922242315,0.040402000980086866
+screen: 1.7 <= z-score < 2.3,screen: 1.7 <= z-score < 2.3,0.52225,0.08517843718697922
+screen: 1.7 <= z-score < 2.3,screen: 1.7 <= z-score < 4.2,0.567925,0.08480373583227989
+screen: 1.7 <= z-score < 2.3,screen: 2.3 <= z-score < 4.2,0.6187,0.10061959565762044
+screen: 1.7 <= z-score < 4.2,lir_central,0.647704081632653,0.02656803507396068
+screen: 1.7 <= z-score < 4.2,lir_central_augmented,0.6339828209764918,0.025558293778898858
+screen: 1.7 <= z-score < 4.2,screen: 1.7 <= z-score < 2.3,0.531975,0.09152419713723886
+screen: 1.7 <= z-score < 4.2,screen: 1.7 <= z-score < 4.2,0.6464749999999999,0.08021207291557887
+screen: 1.7 <= z-score < 4.2,screen: 2.3 <= z-score < 4.2,0.85445,0.060832378572831476
+screen: 2.3 <= z-score < 4.2,lir_central,0.6894763694951664,0.02181375772951527
+screen: 2.3 <= z-score < 4.2,lir_central_augmented,0.6834109403254973,0.019403037335988537
+screen: 2.3 <= z-score < 4.2,screen: 1.7 <= z-score < 2.3,0.4983625,0.09123394680294405
+screen: 2.3 <= z-score < 4.2,screen: 1.7 <= z-score < 4.2,0.6222625,0.07843978401238169
+screen: 2.3 <= z-score < 4.2,screen: 2.3 <= z-score < 4.2,0.8635375000000001,0.05193905926684899
+screen: xxx[FWY]xx[LVI]; 2.3 <= z-score < 4.2,lir_central,0.6895461868958109,0.02221666751786702
+screen: xxx[FWY]xx[LVI]; 2.3 <= z-score < 4.2,lir_central_augmented,0.6835239602169981,0.019988182449391517
+screen: xxx[FWY]xx[LVI]; 2.3 <= z-score < 4.2,screen: 1.7 <= z-score < 2.3,0.4998375,0.08931198421258985
+screen: xxx[FWY]xx[LVI]; 2.3 <= z-score < 4.2,screen: 1.7 <= z-score < 4.2,0.6240625,0.07748256055820926
+screen: xxx[FWY]xx[LVI]; 2.3 <= z-score < 4.2,screen: 2.3 <= z-score < 4.2,0.8649875,0.051985968082986146

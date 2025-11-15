@@ -1,0 +1,37 @@
+# Custom Matplotlib Stylesheet
+# Based on provided rcParams configuration
+
+# Axes settings
+axes.labelsize: 8
+axes.linewidth: 1
+axes.titlesize: 8
+
+# Figure settings
+figure.dpi: 300
+
+# Font settings
+font.family: sans-serif
+font.sans-serif: Helvetica
+font.size: 8
+
+# Legend settings
+legend.fontsize: 5.5
+legend.framealpha: 0.5
+
+# Line settings
+lines.linewidth: 1
+
+# X-axis tick settings
+# xtick.labelsize: 6
+xtick.labelsize: 8
+xtick.major.width: 1
+
+# Y-axis tick settings
+# ytick.labelsize: 6
+ytick.labelsize: 8
+ytick.major.width: 1
+
+# Save figure settings
+savefig.dpi: 300
+savefig.format: svg
+savefig.transparent: True

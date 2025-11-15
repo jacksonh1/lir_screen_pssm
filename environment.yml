@@ -19,6 +19,7 @@ dependencies:
   - biopython>=1.80
   - scikit-learn
   - jupytext
+  - adjusttext
   - pip:
     - python-dotenv
     - mkdocs
